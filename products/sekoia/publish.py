@@ -69,7 +69,7 @@ def publish_intake_format(integration: Integration):
     print("Open a browser to\nhttps://TODO.com\nTo create a PR to SEKOIA-IO/intake-formats")
 
     # Clean up tmp_path
-    shutil.rmtree(tmp_path)
+    # shutil.rmtree(tmp_path)
 
     # Pull intakes also involve an automation connector, let's publish a PR for it too
     if integration.mode == "pull":
