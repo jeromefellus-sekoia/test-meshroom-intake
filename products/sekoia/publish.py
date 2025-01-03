@@ -63,7 +63,7 @@ def publish_intake_format(integration: Integration):
     # Push the changes to the remote branch
     Git(tmp_path).add(".")
     Git(tmp_path).commit(f"Publish {name} intake format")
-    Git(tmp_path).push(False, remote="origin")
+    Git(tmp_path).push(False, remote="origin", force=True)
 
     # TODO : Print link to create PR from {branch} to intake-formats' main branch
     print("Open a browser to\nhttps://TODO.com\nTo create a PR to SEKOIA-IO/intake-formats")
