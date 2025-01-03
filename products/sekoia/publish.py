@@ -17,7 +17,6 @@ def publish_intake_format(integration: Integration):
     We proceed by cloning the intake-formats repo to a tmp_path, copying the intake format files to it and pushing to a branch
     """
     from meshroom.git import Git
-    from meshroom.model import get_project_dir
     from meshroom.template import generate_files_from_template
 
     name = integration.target_product
@@ -31,10 +30,8 @@ def publish_intake_format(integration: Integration):
         )
         integration.save()
 
-    intake_formats_path = get_project_dir() / "mirrors" / integration.product / "intake-formats"
     path = integration.path.parent / "dist" / "formats" / name
     tmp_path = path / f"tmp-{uuid4()}"
-    Git(intake_formats_path).pull(integration.intake_formats_fork_url)
 
     if Git(path).push(True, ".", f"Update {name} intake format"):
         print(f"Intake format {name} successfully pushed to git repo")
@@ -42,7 +39,7 @@ def publish_intake_format(integration: Integration):
         print(f"Intake format {name} is up-to-date in git repo")
 
     # Clone intake-formats' main branch to tmp_path pointing to our project's remote
-    Git(tmp_path).pull(intake_formats_path)
+    Git(tmp_path).pull(integration.intake_formats_fork_url)
     Git(tmp_path).create_branch(f"intake-format-{name}")
 
     # Scaffold a dummy module from templates/intake_format_module
