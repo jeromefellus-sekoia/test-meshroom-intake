@@ -1,5 +1,7 @@
 import shutil
 from uuid import uuid4
+
+import click
 from meshroom.model import Integration
 from meshroom.decorators import publish
 
@@ -8,6 +10,9 @@ from meshroom.decorators import publish
 def publish_intake_format(integration: Integration):
     """
     Publish an intake format as a PR to Sekoia.io's https://github.com/SEKOIA-IO/intake-formats opensource repo
+
+    The integration is required to point to a github fork of the intake format's repo.
+    If not, the user will be prompted to provide a valid fork URL.
 
     We proceed by cloning the intake-formats repo to a tmp_path, copying the intake format files to it and pushing to a branch
     """
@@ -18,10 +23,19 @@ def publish_intake_format(integration: Integration):
     name = integration.target_product
     module_name = name
 
+    # Prompt the user to provide a github fork URL if not already set
+    if not getattr(integration, "intake_formats_fork_url", None):
+        integration.intake_format_fork_url = click.prompt(
+            "Please provide a github.com fork URL of https://github.com/SEKOIA-IO/intake-formats.git\n"
+            "(open a browser to https://github.com/SEKOIA-IO/intake-formats/fork to create one): ",
+            type=str,
+        )
+        integration.save()
+
     intake_formats_path = get_project_dir() / "mirrors" / integration.product / "intake-formats"
     path = integration.path.parent / "dist" / "formats" / name
     tmp_path = path / f"tmp-{uuid4()}"
-    Git(intake_formats_path).pull("https://github.com/SEKOIA-IO/intake-formats.git")
+    Git(intake_formats_path).pull(integration.intake_formats_fork_url)
 
     if Git(path).push(True, ".", f"Update {name} intake format"):
         print(f"Intake format {name} successfully pushed to git repo")
@@ -31,8 +45,6 @@ def publish_intake_format(integration: Integration):
     # Clone intake-formats' main branch to tmp_path pointing to our project's remote
     Git(tmp_path).pull(intake_formats_path)
     Git(tmp_path).create_branch(f"intake-format-{name}")
-    Git(tmp_path).remove_remote("origin")
-    Git(tmp_path).add_remote("origin", Git(path).get_remote())
 
     # Scaffold a dummy module from templates/intake_format_module
     generate_files_from_template(
