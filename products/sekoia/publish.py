@@ -64,12 +64,12 @@ def publish_intake_format(integration: Integration):
     Git(tmp_path).commit(f"Publish {name} intake format")
     Git(tmp_path).push(False, remote="origin", force=True)
 
-    # TODO : Print link to create PR from {branch} to intake-formats' main branch
-    print(Git(tmp_path).get_remote())
-    print(f"Open a browser to\n{REPO}/compare/main...jeromefellus-sekoia:intake-format-example?expand=1\nTo create a PR to SEKOIA-IO/intake-formats")
+    # Propose to create a PR from the fork to SEKOIA-IO/intake-formats
+    pr_source = Git(tmp_path).get_remote().split(":")[-1].split(".git")[0].replace("/", ":")
+    print(f"Open a browser to\n{REPO}/compare/main...{pr_source}?expand=1\nTo create a PR to SEKOIA-IO/intake-formats")
 
     # Clean up tmp_path
-    # shutil.rmtree(tmp_path)
+    shutil.rmtree(tmp_path)
 
     # Pull intakes also involve an automation connector, let's publish a PR for it too
     if integration.mode == "pull":
