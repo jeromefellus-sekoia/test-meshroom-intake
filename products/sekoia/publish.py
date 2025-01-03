@@ -19,13 +19,15 @@ def publish_intake_format(integration: Integration):
     from meshroom.git import Git
     from meshroom.template import generate_files_from_template
 
+    REPO = "https://github.com/SEKOIA-IO/intake-formats"
+
     name = integration.target_product
     module_name = name
 
     # Prompt the user to provide a github fork URL if not already set
     if not getattr(integration, "intake_formats_fork_url", None):
         integration.intake_formats_fork_url = click.prompt(
-            "Please provide a github.com fork URL of https://github.com/SEKOIA-IO/intake-formats.git\n(open a browser to https://github.com/SEKOIA-IO/intake-formats/fork to create one)",
+            f"Please provide a github.com fork URL of {REPO}\n(open a browser to {REPO}/fork to create one)",
             type=str,
         )
         integration.save()
@@ -63,7 +65,8 @@ def publish_intake_format(integration: Integration):
     Git(tmp_path).push(False, remote="origin", force=True)
 
     # TODO : Print link to create PR from {branch} to intake-formats' main branch
-    print("Open a browser to\nhttps://TODO.com\nTo create a PR to SEKOIA-IO/intake-formats")
+    print(Git(tmp_path).get_remote())
+    print(f"Open a browser to\n{REPO}/compare/main...jeromefellus-sekoia:intake-format-example?expand=1\nTo create a PR to SEKOIA-IO/intake-formats")
 
     # Clean up tmp_path
     # shutil.rmtree(tmp_path)
