@@ -25,9 +25,8 @@ def publish_intake_format(integration: Integration):
 
     # Prompt the user to provide a github fork URL if not already set
     if not getattr(integration, "intake_formats_fork_url", None):
-        integration.intake_format_fork_url = click.prompt(
-            "Please provide a github.com fork URL of https://github.com/SEKOIA-IO/intake-formats.git\n"
-            "(open a browser to https://github.com/SEKOIA-IO/intake-formats/fork to create one): ",
+        integration.intake_formats_fork_url = click.prompt(
+            "Please provide a github.com fork URL of https://github.com/SEKOIA-IO/intake-formats.git\n(open a browser to https://github.com/SEKOIA-IO/intake-formats/fork to create one)",
             type=str,
         )
         integration.save()
