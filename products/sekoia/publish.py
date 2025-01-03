@@ -50,8 +50,6 @@ def publish_intake_format(integration: Integration):
             shutil.copytree(path / d, tmp_path / module_name / name / d)
 
     # Push the changes to the remote branch
-    print(Git(tmp_path).status())
-    print(Git(tmp_path).get_updated_files())
     Git(tmp_path).add(".")
     Git(tmp_path).commit(f"Publish {name} intake format")
     Git(tmp_path).push(False, remote="origin")
