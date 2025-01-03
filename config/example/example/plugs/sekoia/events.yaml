@@ -1,0 +1,7 @@
+dst_tenant: sekoia
+mode: push
+settings:
+  intake_uuid: 9d6dbf34-d454-4efd-a32a-60df67f81133
+src_tenant: example
+status: up
+topic: events
